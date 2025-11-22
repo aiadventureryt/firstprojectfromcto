@@ -1,12 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { HealthCheckResponse } from '@workspace/shared';
+import { setMockAuthUser, getAuthUser } from '@/lib/auth';
 
 export default function Home() {
+  const router = useRouter();
   const [health, setHealth] = useState<HealthCheckResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const fetchHealth = async () => {
@@ -28,8 +33,20 @@ export default function Home() {
       }
     };
 
+    const user = getAuthUser();
+    setIsAdmin(user?.role === 'admin');
+
     fetchHealth();
   }, []);
+
+  const handleAdminLogin = () => {
+    setMockAuthUser();
+    setIsAdmin(true);
+  };
+
+  const handleAdminAccess = () => {
+    router.push('/admin');
+  };
 
   return (
     <main style={styles.container}>
@@ -38,6 +55,31 @@ export default function Home() {
         <p style={styles.subtitle}>
           A modern full-stack application with Next.js and NestJS
         </p>
+
+        {!isAdmin && (
+          <div style={styles.adminSection}>
+            <button
+              style={styles.adminLoginBtn}
+              onClick={handleAdminLogin}
+            >
+              🔐 Login as Admin
+            </button>
+            <p style={styles.adminNote}>
+              Click to demo the admin panel (mock authentication)
+            </p>
+          </div>
+        )}
+
+        {isAdmin && (
+          <div style={styles.adminSection}>
+            <button
+              style={styles.adminAccessBtn}
+              onClick={handleAdminAccess}
+            >
+              → Go to Admin Panel
+            </button>
+          </div>
+        )}
 
         <div style={styles.statusSection}>
           <h2 style={styles.sectionTitle}>System Status</h2>
@@ -124,6 +166,42 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: '16px',
     padding: '3rem',
     boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+  },
+  adminSection: {
+    marginBottom: '2rem',
+    padding: '1.5rem',
+    background: '#f0f4ff',
+    borderRadius: '8px',
+    border: '2px solid #667eea',
+    textAlign: 'center',
+  },
+  adminLoginBtn: {
+    padding: '0.75rem 1.5rem',
+    background: '#667eea',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    fontWeight: '600',
+    transition: 'background 0.2s',
+  },
+  adminAccessBtn: {
+    padding: '0.75rem 1.5rem',
+    background: '#764ba2',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    fontWeight: '600',
+    transition: 'background 0.2s',
+  },
+  adminNote: {
+    margin: '0.75rem 0 0 0',
+    fontSize: '0.9rem',
+    color: '#666',
+    fontStyle: 'italic',
   },
   title: {
     fontSize: '3rem',
