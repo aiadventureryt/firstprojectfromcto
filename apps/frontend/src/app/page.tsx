@@ -1,9 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { HealthCheckResponse } from '@workspace/shared';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Home() {
+  const { isAuthenticated, user } = useAuth();
   const [health, setHealth] = useState<HealthCheckResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +34,32 @@ export default function Home() {
     fetchHealth();
   }, []);
 
+  if (isAuthenticated && user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-indigo-100 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
+          <div className="mx-auto h-16 w-16 bg-primary-100 rounded-full flex items-center justify-center mb-6">
+            <svg className="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Welcome back, {user.name}!
+          </h1>
+          <p className="text-gray-600 mb-6">
+            You're already logged in. Access your dashboard below.
+          </p>
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          >
+            Go to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main style={styles.container}>
       <div style={styles.card}>
@@ -38,6 +67,19 @@ export default function Home() {
         <p style={styles.subtitle}>
           A modern full-stack application with Next.js and NestJS
         </p>
+
+        {/* Auth Actions */}
+        <div style={styles.authSection}>
+          <h2 style={styles.sectionTitle}>Get Started</h2>
+          <div style={styles.authButtons}>
+            <Link href="/login" style={styles.authButton}>
+              Sign In
+            </Link>
+            <Link href="/register" style={styles.authButtonSecondary}>
+              Create Account
+            </Link>
+          </div>
+        </div>
 
         <div style={styles.statusSection}>
           <h2 style={styles.sectionTitle}>System Status</h2>
@@ -86,7 +128,7 @@ export default function Home() {
               <strong>Package Manager:</strong> pnpm Workspaces
             </div>
             <div style={styles.techItem}>
-              <strong>Styling:</strong> CSS-in-JS (inline styles)
+              <strong>Styling:</strong> Tailwind CSS + Headless UI
             </div>
           </div>
         </div>
@@ -116,6 +158,43 @@ const styles: { [key: string]: React.CSSProperties } = {
     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     padding: '2rem',
     fontFamily: 'system-ui, -apple-system, sans-serif',
+  },
+  authSection: {
+    marginBottom: '2rem',
+    padding: '1.5rem',
+    background: '#f8f9fa',
+    borderRadius: '8px',
+  },
+  authButtons: {
+    display: 'flex',
+    gap: '1rem',
+    justifyContent: 'center',
+  },
+  authButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: '0.75rem 1.5rem',
+    border: 'none',
+    borderRadius: '0.5rem',
+    fontSize: '1rem',
+    fontWeight: '500',
+    textDecoration: 'none',
+    backgroundColor: '#3b82f6',
+    color: 'white',
+    transition: 'background-color 0.2s',
+  },
+  authButtonSecondary: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: '0.75rem 1.5rem',
+    border: '1px solid #d1d5db',
+    borderRadius: '0.5rem',
+    fontSize: '1rem',
+    fontWeight: '500',
+    textDecoration: 'none',
+    backgroundColor: 'white',
+    color: '#374151',
+    transition: 'all 0.2s',
   },
   card: {
     maxWidth: '800px',
