@@ -8,7 +8,7 @@ A modern full-stack monorepo with a clean separation between frontend and backen
 project/
 ├── apps/
 │   ├── backend/     # NestJS API service
-│   └── frontend/    # Next.js web application
+│   └── frontend/    # React + Vite web application
 ├── packages/
 │   └── shared/      # Shared types and utilities
 ├── package.json     # Root package with workspace scripts
@@ -27,17 +27,18 @@ project/
 
 ### Frontend
 
-- **Framework**: Next.js 14 with App Router
+- **Framework**: React + Vite
 - **Language**: TypeScript
-- **Styling**: CSS-in-JS (inline styles)
-- **Environment**: Environment variables for API configuration
+- **Routing**: React Router DOM
+- **Styling**: CSS Variables (calming blue/green palette) + Roboto font
+- **Environment**: Environment variables (`VITE_` prefix)
 
 ### Development Tools
 
 - **Package Manager**: pnpm with workspaces
 - **Code Quality**: ESLint + Prettier
 - **Type Safety**: TypeScript with shared configurations
-- **Testing**: Jest (backend), Next.js testing (frontend)
+- **Testing**: Jest (backend)
 
 ## 📋 Prerequisites
 
@@ -137,12 +138,13 @@ pnpm format:check
 
 ### Frontend (`apps/frontend/`)
 
-- `src/app/` - Next.js App Router pages
-- `src/app/page.tsx` - Landing page with health check
-- `src/app/layout.tsx` - Root layout
-- `src/app/globals.css` - Global styles
+- `src/main.tsx` - Application entry point
+- `src/App.tsx` - Root component and router
+- `src/pages/` - Page components (Landing, Dashboard, Planner)
+- `src/components/` - Shared components (Layouts, UI)
+- `src/index.css` - Global styles
 - `package.json` - Frontend dependencies
-- `next.config.js` - Next.js configuration
+- `vite.config.ts` - Vite configuration
 
 ### Shared (`packages/shared/`)
 
@@ -193,7 +195,7 @@ Example response:
 - ✅ **Code Quality**: ESLint and Prettier configuration
 - ✅ **Hot Reload**: Development servers with hot module replacement
 - ✅ **CORS**: Backend configured for frontend integration
-- ✅ **Modern Stack**: Latest versions of Next.js, NestJS, and TypeScript
+- ✅ **Modern Stack**: Vite, React, NestJS, and TypeScript
 
 ## 🔍 Development Workflow
 
@@ -215,9 +217,9 @@ Example response:
 
 ### Frontend
 
-- `NEXT_PUBLIC_API_URL` - Backend API URL
-- `NEXT_PUBLIC_APP_NAME` - Application name
-- `NEXT_PUBLIC_APP_VERSION` - Application version
+- `VITE_API_URL` - Backend API URL
+- `VITE_APP_NAME` - Application name
+- `VITE_APP_VERSION` - Application version
 
 ## 🚀 Deployment
 
@@ -227,11 +229,15 @@ Example response:
 2. Deploy the `dist/` folder to your hosting platform
 3. Set environment variables
 
-### Frontend Deployment
+### Frontend Deployment (Vercel)
 
-1. Build the frontend: `pnpm build:frontend`
-2. Deploy the `.next/` folder to your hosting platform
-3. Set environment variables
+1. Connect your repository to Vercel.
+2. Set the "Root Directory" to `apps/frontend`.
+3. The build command should be `pnpm build` (or `vite build`).
+4. The output directory should be `dist`.
+5. Set environment variables in the Vercel dashboard.
+
+Alternatively, running `pnpm build:frontend` locally will generate the `apps/frontend/dist` directory which can be deployed to any static host.
 
 ## 🤝 Contributing
 
